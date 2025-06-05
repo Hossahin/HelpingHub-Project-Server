@@ -25,6 +25,20 @@ async function run() {
     const userData = VolunteerDB.collection("userData");
     const VolunteerNeedPost = VolunteerDB.collection("VolunteerNeedPost");
 
+    app.get("/AddVolunteerNeedPost/featuresdete", async (req, res) => {
+      const today = new Date();
+      const yyyy = today.getFullYear();
+      const mm = String(today.getMonth() + 1).padStart(2, "0");
+      const dd = String(today.getDate()).padStart(2, "0");
+      const formattedToday = `${yyyy}-${mm}-${dd}`;
+      const query = { startDate: { $gt: formattedToday } };
+      const result = await VolunteerNeedPost.find(query)
+        .sort({ startDate: 1 })
+        .limit(6)
+        .toArray();
+      res.json(result);
+    });
+
     app.post("/signup", async (req, res) => {
       const data = req.body;
       console.log(data);
