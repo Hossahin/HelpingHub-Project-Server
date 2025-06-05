@@ -25,6 +25,15 @@ async function run() {
     const userData = VolunteerDB.collection("userData");
     const VolunteerNeedPost = VolunteerDB.collection("VolunteerNeedPost");
 
+    app.get("/AllVolunteerNeedposts/volunteerneedpostdetailspage/:id",
+      async (req, res) => {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) };
+        const result = await VolunteerNeedPost.findOne(query);
+        res.send(result);
+      }
+    );
+
     app.get("/AddVolunteerNeedPost/featuresdete", async (req, res) => {
       const today = new Date();
       const yyyy = today.getFullYear();
