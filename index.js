@@ -54,6 +54,14 @@ async function run() {
       res.json(result);
     });
 
+    app.get("/ManageMyPosts/:email", async (req, res) => {
+      const email = req.params.email;
+      console.log(email);
+      const query = { organizeremail: email };
+      const result = await VolunteerNeedPost.find(query).toArray();
+      res.send(result);
+    });
+
     app.post("/signup", async (req, res) => {
       const data = req.body;
       console.log(data);
