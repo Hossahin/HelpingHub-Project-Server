@@ -25,7 +25,13 @@ async function run() {
     const userData = VolunteerDB.collection("userData");
     const VolunteerNeedPost = VolunteerDB.collection("VolunteerNeedPost");
 
-    app.get("/AllVolunteerNeedposts/volunteerneedpostdetailspage/:id",
+    app.get("/AllVolunteerNeedposts", async (req, res) => {
+      const result = await VolunteerNeedPost.find().toArray();
+      res.send(result);
+    });
+
+    app.get(
+      "/AllVolunteerNeedposts/volunteerneedpostdetailspage/:id",
       async (req, res) => {
         const id = req.params.id;
         const query = { _id: new ObjectId(id) };
