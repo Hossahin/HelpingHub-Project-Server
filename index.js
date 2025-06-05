@@ -23,11 +23,19 @@ async function run() {
   try {
     const VolunteerDB = client.db("VolunteerDB");
     const userData = VolunteerDB.collection("userData");
+    const VolunteerNeedPost = VolunteerDB.collection("VolunteerNeedPost");
 
     app.post("/signup", async (req, res) => {
       const data = req.body;
       console.log(data);
       const result = await userData.insertOne(data);
+      res.send({ message: "Data Insert Success", data: result });
+    });
+
+    app.post("/AddVolunteerNeedPost", async (req, res) => {
+      const data = req.body;
+      console.log(data);
+      const result = await VolunteerNeedPost.insertOne(data);
       res.send({ message: "Data Insert Success", data: result });
     });
 
