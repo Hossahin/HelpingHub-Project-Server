@@ -24,6 +24,7 @@ async function run() {
     const VolunteerDB = client.db("VolunteerDB");
     const userData = VolunteerDB.collection("userData");
     const VolunteerNeedPost = VolunteerDB.collection("VolunteerNeedPost");
+    const VolunteerDetails = VolunteerDB.collection("VolunteerDetails");
 
     app.get("/AllVolunteerNeedposts", async (req, res) => {
       const result = await VolunteerNeedPost.find().toArray();
@@ -73,6 +74,13 @@ async function run() {
       const data = req.body;
       console.log(data);
       const result = await VolunteerNeedPost.insertOne(data);
+      res.send({ message: "Data Insert Success", data: result });
+    });
+
+    app.post("/VolunteerDetails", async (req, res) => {
+      const data = req.body;
+      console.log(data);
+      const result = await VolunteerDetails.insertOne(data);
       res.send({ message: "Data Insert Success", data: result });
     });
 
