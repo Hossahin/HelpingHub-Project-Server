@@ -76,6 +76,22 @@ async function run() {
       res.send({ message: "Data Insert Success", data: result });
     });
 
+    app.put("/Myvolunteerneedposts/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updateMyVolunteerNeedPosts = req.body;
+      const updateDoc = {
+        $set: updateMyVolunteerNeedPosts,
+      };
+      const result = await VolunteerNeedPost.updateOne(
+        filter,
+        updateDoc,
+        options
+      );
+      res.send(result);
+    });
+
     app.delete("/Myvolunteerneedpost/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
