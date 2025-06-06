@@ -100,6 +100,22 @@ async function run() {
       res.send(result);
     });
 
+    app.patch("/AllVolunteerNeedposts/:id", async (req, res) => {
+      const id = req.params.id;
+      const { Noofvolunteersneeded } = req.body;
+
+      const UpdateNoofvolunteersneeded = {
+        $inc: { Noofvolunteersneeded: Noofvolunteersneeded },
+      };
+      const filter = { _id: new ObjectId(id) };
+
+      const result = await VolunteerNeedPost.updateOne(
+        filter,
+        UpdateNoofvolunteersneeded
+      );
+      res.send(result);
+    });
+
     app.delete("/Myvolunteerneedpost/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
