@@ -31,6 +31,30 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/AllVolunteerNeedposts/Search", async (req, res) => {
+      const { searchParams } = req.query;
+      let query = {};
+      if (searchParams) {
+        query = { posttitle: { $regex: searchParams, $options: "i" } };
+      }
+      const result = await VolunteerNeedPost.find(query).toArray();
+      res.send(result);
+    });
+
+    app.get("/VolunteerDetails/:email", async (req, res) => {
+      const email = req?.params?.email;
+      console.log("VolunteerDetails", email);
+      const query = { volunteeremail: email, status: "requested" };
+      // const filter = { status: "requested" };
+      const result = await VolunteerDetails.find(query).toArray();
+      res.send(result);
+    });
+
+    // app.get("/VolunteerDetails", async (req, res) => {
+    //   const result = await VolunteerDetails.find().toArray();
+    //   res.send(result);
+    // });
+
     app.get(
       "/AllVolunteerNeedposts/volunteerneedpostdetailspage/:id",
       async (req, res) => {
@@ -57,7 +81,7 @@ async function run() {
 
     app.get("/ManageMyPosts/:email", async (req, res) => {
       const email = req.params.email;
-      console.log(email);
+      console.log("ManageMyPosts", email);
       const query = { organizeremail: email };
       const result = await VolunteerNeedPost.find(query).toArray();
       res.send(result);
@@ -113,6 +137,13 @@ async function run() {
         filter,
         UpdateNoofvolunteersneeded
       );
+      res.send(result);
+    });
+
+    app.delete("/VolunteerDetails/:id", async (req, res) => {
+      const id = req?.params?.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await VolunteerDetails.deleteOne(query);
       res.send(result);
     });
 
