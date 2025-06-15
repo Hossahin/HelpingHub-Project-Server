@@ -2,10 +2,29 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+const admin = require("firebase-admin");
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.use(cors());
+const decoded = Buffer.from(
+  process.env.FIREBASE_SERVICE_KEY,
+  "base64"
+).toString("utf-8");
+var serviceAccount = JSON.parse(decoded);
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
+
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://assignment-11-category-10.web.app/",
+    ],
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.zwhgf1c.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
@@ -18,6 +37,23 @@ const client = new MongoClient(uri, {
     deprecationErrors: true,
   },
 });
+
+const verifyJWT = async (req, res, next) => {
+  const token = req?.headers?.authorization?.split(" ")[1];
+  console.log(token);
+
+  if (!token) return res.status(401).send({ message: "Unauthorized Access!" });
+
+  try {
+    const decoded = await admin.auth().verifyIdToken(token);
+    req.tokenEmail = decoded.email;
+    console.log(decoded);
+    next();
+  } catch (err) {
+    console.log(err);
+    return res.status(401).send({ message: "Unauthorized Access!" });
+  }
+};
 
 async function run() {
   try {
@@ -41,11 +77,13 @@ async function run() {
       res.send(result);
     });
 
-    app.get("/VolunteerDetails/:email", async (req, res) => {
-      const email = req?.params?.email;
-      console.log("VolunteerDetails", email);
+    app.get("/VolunteerDetails/:email", verifyJWT, async (req, res) => {
+      const decodedEmail = req.tokenEmail;
+      const email = req.params.email;
+      if (decodedEmail !== email) {
+        return res.status(403).send({ message: "Forbidden Access!" });
+      }
       const query = { volunteeremail: email, status: "requested" };
-      // const filter = { status: "requested" };
       const result = await VolunteerDetails.find(query).toArray();
       res.send(result);
     });
@@ -79,7 +117,7 @@ async function run() {
       res.json(result);
     });
 
-    app.get("/ManageMyPosts/:email", async (req, res) => {
+    app.get("/ManageMyPosts/:email", verifyJWT, async (req, res) => {
       const email = req.params.email;
       console.log("ManageMyPosts", email);
       const query = { organizeremail: email };
@@ -94,16 +132,14 @@ async function run() {
       res.send({ message: "Data Insert Success", data: result });
     });
 
-    app.post("/AddVolunteerNeedPost", async (req, res) => {
+    app.post("/AddVolunteerNeedPost", verifyJWT, async (req, res) => {
       const data = req.body;
-      console.log(data);
       const result = await VolunteerNeedPost.insertOne(data);
       res.send({ message: "Data Insert Success", data: result });
     });
 
-    app.post("/VolunteerDetails", async (req, res) => {
+    app.post("/VolunteerDetails", verifyJWT, async (req, res) => {
       const data = req.body;
-      console.log(data);
       const result = await VolunteerDetails.insertOne(data);
       res.send({ message: "Data Insert Success", data: result });
     });
@@ -124,7 +160,7 @@ async function run() {
       res.send(result);
     });
 
-    app.patch("/AllVolunteerNeedposts/:id", async (req, res) => {
+    app.patch("/AllVolunteerNeedposts/:id", verifyJWT, async (req, res) => {
       const id = req.params.id;
       const { Noofvolunteersneeded } = req.body;
 
@@ -140,14 +176,14 @@ async function run() {
       res.send(result);
     });
 
-    app.delete("/VolunteerDetails/:id", async (req, res) => {
+    app.delete("/VolunteerDetails/:id", verifyJWT, async (req, res) => {
       const id = req?.params?.id;
       const query = { _id: new ObjectId(id) };
       const result = await VolunteerDetails.deleteOne(query);
       res.send(result);
     });
 
-    app.delete("/Myvolunteerneedpost/:id", async (req, res) => {
+    app.delete("/Myvolunteerneedpost/:id", verifyJWT, async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await VolunteerNeedPost.deleteOne(query);
