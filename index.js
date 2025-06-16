@@ -20,7 +20,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://assignment-11-category-10.web.app/",
+      "https://assignment-11-category-10.web.app",
     ],
     credentials: true,
   })
@@ -77,24 +77,16 @@ async function run() {
       res.send(result);
     });
 
-    app.get("/VolunteerDetails/:email", verifyJWT, async (req, res) => {
-      const decodedEmail = req.tokenEmail;
+    app.get("/VolunteerDetails/:email", async (req, res) => {
       const email = req.params.email;
-      if (decodedEmail !== email) {
-        return res.status(403).send({ message: "Forbidden Access!" });
-      }
-      const query = { volunteeremail: email, status: "requested" };
+      const query = { volunteeremail: email };
       const result = await VolunteerDetails.find(query).toArray();
       res.send(result);
     });
 
-    // app.get("/VolunteerDetails", async (req, res) => {
-    //   const result = await VolunteerDetails.find().toArray();
-    //   res.send(result);
-    // });
-
     app.get(
       "/AllVolunteerNeedposts/volunteerneedpostdetailspage/:id",
+      verifyJWT,
       async (req, res) => {
         const id = req.params.id;
         const query = { _id: new ObjectId(id) };
@@ -205,7 +197,7 @@ async function run() {
 run().catch(console.dir);
 
 app.get("/", (req, res) => {
-  res.send("Server");
+  res.send("HelpingHub Server");
 });
 
 app.listen(port, () => {
