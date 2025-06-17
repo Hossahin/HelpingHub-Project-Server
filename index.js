@@ -40,17 +40,14 @@ const client = new MongoClient(uri, {
 
 const verifyJWT = async (req, res, next) => {
   const token = req?.headers?.authorization?.split(" ")[1];
-  console.log(token);
 
   if (!token) return res.status(401).send({ message: "Unauthorized Access!" });
 
   try {
     const decoded = await admin.auth().verifyIdToken(token);
     req.tokenEmail = decoded.email;
-    console.log(decoded);
     next();
   } catch (err) {
-    console.log(err);
     return res.status(401).send({ message: "Unauthorized Access!" });
   }
 };
@@ -111,7 +108,6 @@ async function run() {
 
     app.get("/ManageMyPosts/:email", verifyJWT, async (req, res) => {
       const email = req.params.email;
-      console.log("ManageMyPosts", email);
       const query = { organizeremail: email };
       const result = await VolunteerNeedPost.find(query).toArray();
       res.send(result);
@@ -119,7 +115,6 @@ async function run() {
 
     app.post("/signup", async (req, res) => {
       const data = req.body;
-      console.log(data);
       const result = await userData.insertOne(data);
       res.send({ message: "Data Insert Success", data: result });
     });
@@ -185,10 +180,10 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!"
-    );
+    // await client.db("admin").command({ ping: 1 });
+    // console.log(
+    //   "Pinged your deployment. You successfully connected to MongoDB!"
+    // );
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
