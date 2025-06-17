@@ -74,7 +74,7 @@ async function run() {
       res.send(result);
     });
 
-    app.get("/VolunteerDetails/:email", async (req, res) => {
+    app.get("/VolunteerDetails/:email", verifyJWT, async (req, res) => {
       const email = req.params.email;
       const query = { volunteeremail: email };
       const result = await VolunteerDetails.find(query).toArray();
@@ -177,16 +177,9 @@ async function run() {
       res.send(result);
     });
 
-    // Connect the client to the server	(optional starting in v4.7)
-    // await client.connect();
-    // Send a ping to confirm a successful connection
-    // await client.db("admin").command({ ping: 1 });
-    // console.log(
-    //   "Pinged your deployment. You successfully connected to MongoDB!"
-    // );
+  
   } finally {
-    // Ensures that the client will close when you finish/error
-    // await client.close();
+  
   }
 }
 run().catch(console.dir);
