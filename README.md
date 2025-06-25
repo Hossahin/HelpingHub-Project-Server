@@ -58,3 +58,63 @@ This backend server supports HelpingHub, a volunteer management platform. It pro
 
 - `POST /signup`  
   Register a new user.
+
+
+### 🛠️ Local Setup Guide
+
+Follow these steps to run the project locally:
+
+---
+
+### 1️⃣ **Clone the Repository**
+
+```bash
+https://github.com/Hossahin/HelpingHub-Project-Server.git
+```
+
+---
+
+### 2️⃣ **Navigate to the Project Directory**
+
+```bash
+cd HelpingHub-Project-Server
+```
+
+---
+
+### 3️⃣ **Install Dependencies**
+
+```bash
+npm install
+```
+
+---
+
+### 4️⃣ **Set Up Environment Variables**
+
+> Create a `.env` file in the root directory and add the following:
+
+```env
+DB_USER=your_database_username
+DB_PASS=your_database_password
+
+FIREBASE_SERVICE_KEY=your_firebase_key //base64
+```
+
+---
+
+### 5️⃣ **Start the server with:**
+
+```bash
+nodemon index.js
+```
+
+---
+
+### 6️⃣ **Open the App in Browser**
+
+Visit the local server:
+
+> 🌐 [http://localhost:3000](http://localhost:3000)
+
+
